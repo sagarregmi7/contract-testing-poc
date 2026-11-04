@@ -55,7 +55,7 @@ describe('Product API provider verification', () => {
       publishVerificationResult: true,
 
       // Version of the provider being verified
-      providerVersion: '1.0.0',
+      providerVersion: process.env.GIT_SHA || '1.0.0',
 
       providerVersionBranch: 'main',
 
