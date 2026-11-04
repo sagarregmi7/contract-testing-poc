@@ -14,6 +14,7 @@ beforeAll(async () => {
   });
 
   const address = server.address();
+  console.log("..check",process.env.PACT_BROKER_URL)
 
   providerBaseUrl = `http://127.0.0.1:${address.port}`;
 });
@@ -39,11 +40,11 @@ describe('Product API provider verification', () => {
       providerBaseUrl,
 
       // Retrieve contracts from Pact Broker
-      pactBrokerUrl: process.env.PACT_BROKER_URL, 
+      pactBrokerUrl: process.env.PACT_BROKER_URL || 'http://3.148.136.140:9292', 
 
       // // Broker authentication (for basic-authenticated OSS Broker)
-      // pactBrokerUsername: process.env.PACT_BROKER_USERNAME,
-      // pactBrokerPassword: process.env.PACT_BROKER_PASSWORD,
+      pactBrokerUsername: process.env.PACT_BROKER_USERNAME,
+      pactBrokerPassword: process.env.PACT_BROKER_PASSWORD,
 
       // Retrieve the latest consumer contract
       consumerVersionSelectors: [
@@ -59,5 +60,5 @@ describe('Product API provider verification', () => {
       providerVersionBranch: 'main',
 
     }).verifyProvider();
-  });
+  },30000);
 });

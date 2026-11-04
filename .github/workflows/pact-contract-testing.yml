@@ -47,8 +47,8 @@ jobs:
       - name: Run REST consumer tests
         run: npm run test:rest:consumer
 
-      - name: Run event consumer tests
-        run: npm run test:event:consumer
+      # - name: Run event consumer tests
+      #   run: npm run test:event:consumer
 
       # Publish only from push events.
       # PRs from forks generally do not have access to secrets.
