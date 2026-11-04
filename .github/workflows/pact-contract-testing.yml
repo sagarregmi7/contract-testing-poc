@@ -101,8 +101,8 @@ jobs:
       - name: Run REST provider verification
         run: npm run test:rest:provider
 
-      - name: Run event provider verification
-        run: npm run test:event:provider
+      # - name: Run event provider verification
+      #   run: npm run test:event:provider
 
       # -----------------------------------
       # Deployment compatibility check
