@@ -1,0 +1,116 @@
+
+name: Pact Contract Testing
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+
+  pull_request:
+    branches:
+      - main
+      - develop
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+
+  # ---------------------------------------
+  # JOB 1: Consumer contract testing
+  # ---------------------------------------
+  consumer-contract:
+    name: Consumer Contract Tests
+    runs-on: ubuntu-latest
+
+    env:
+      PACT_BROKER_URL: ${{ vars.PACT_BROKER_URL }}
+      PACT_BROKER_USERNAME: ${{ secrets.PACT_BROKER_USERNAME }}
+      PACT_BROKER_PASSWORD: ${{ secrets.PACT_BROKER_PASSWORD }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run REST consumer tests
+        run: npm run test:rest:consumer
+
+      - name: Run event consumer tests
+        run: npm run test:event:consumer
+
+      # Publish only from push events.
+      # PRs from forks generally do not have access to secrets.
+      - name: Publish contracts to Pact Broker
+        if: github.event_name == 'push'
+        run: |
+          npx pact broker publish ./pacts \
+            --consumer-app-version="${GITHUB_SHA}" \
+            --branch="${GITHUB_REF_NAME}" \
+            --broker-base-url="${PACT_BROKER_URL}"
+        env:
+          PACT_BROKER_URL: ${{ vars.PACT_BROKER_URL }}
+          PACT_BROKER_USERNAME: ${{ secrets.PACT_BROKER_USERNAME }}
+          PACT_BROKER_PASSWORD: ${{ secrets.PACT_BROKER_PASSWORD }}
+
+
+  # ---------------------------------------
+  # JOB 2: Provider contract verification
+  # ---------------------------------------
+  provider-verification:
+    name: Provider Verification
+
+    needs: consumer-contract
+
+    if: github.event_name == 'push'
+
+    runs-on: ubuntu-latest
+
+    env:
+      PACT_BROKER_URL: ${{ vars.PACT_BROKER_URL }}
+      PACT_BROKER_USERNAME: ${{ secrets.PACT_BROKER_USERNAME }}
+      PACT_BROKER_PASSWORD: ${{ secrets.PACT_BROKER_PASSWORD }}
+
+      GIT_SHA: ${{ github.sha }}
+      GIT_BRANCH: ${{ github.ref_name }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run REST provider verification
+        run: npm run test:rest:provider
+
+      - name: Run event provider verification
+        run: npm run test:event:provider
+
+      # -----------------------------------
+      # Deployment compatibility check
+      # -----------------------------------
+      - name: Check deployment compatibility
+        run: |
+          npx pact broker can-i-deploy \
+            --pacticipant ProductAPI \
+            --version "${GIT_SHA}" \
+            --to-environment test \
+            --broker-base-url="${PACT_BROKER_URL}"

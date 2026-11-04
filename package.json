@@ -1,0 +1,27 @@
+{
+  "name": "cont-testing",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "test:rest:consumer": "vitest run tests/rest-consumer.test.js",
+    "test:rest:provider": "vitest run tests/rest-provider.test.js",
+    "test:event:consumer": "vitest run tests/event-consumer.test.js",
+    "test:event:provider": "vitest run tests/event-provider.test.js",
+    "pact:publish": "pact-broker publish ./pacts --consumer-app-version=1.0.0 --broker-base-url=http://localhost:9292"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "ajv": "^8.20.0",
+    "express": "^5.3.0"
+  },
+  "devDependencies": {
+    "@pact-foundation/pact": "^17.1.4",
+    "@pact-foundation/pact-cli": "^18.10.9",
+    "vitest": "^5.0.5"
+  }
+}
