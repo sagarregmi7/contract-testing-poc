@@ -39,11 +39,11 @@ describe('Product API provider verification', () => {
       providerBaseUrl,
 
       // Retrieve contracts from Pact Broker
-      pactBrokerUrl: 'http://localhost:9292', 
+      pactBrokerUrl: process.env.PACT_BROKER_URL, 
 
-      // Broker authentication (for basic-authenticated OSS Broker)
-      pactBrokerUsername: process.env.PACT_BROKER_USERNAME,
-      pactBrokerPassword: process.env.PACT_BROKER_PASSWORD,
+      // // Broker authentication (for basic-authenticated OSS Broker)
+      // pactBrokerUsername: process.env.PACT_BROKER_USERNAME,
+      // pactBrokerPassword: process.env.PACT_BROKER_PASSWORD,
 
       // Retrieve the latest consumer contract
       consumerVersionSelectors: [

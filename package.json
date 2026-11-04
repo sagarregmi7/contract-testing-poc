@@ -6,11 +6,11 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "test:rest:consumer": "vitest run tests/rest-consumer.test.js",
-    "test:rest:provider": "vitest run tests/rest-provider.test.js",
+    "test:rest:provider": "dotenv -- vitest run tests/rest-provider.test.js",
     "test:event:consumer": "vitest run tests/event-consumer.test.js",
     "test:event:provider": "vitest run tests/event-provider.test.js",
-    "pact:publish": "pact-broker publish ./pacts --consumer-app-version=1.0.0 --broker-base-url=http://localhost:9292"
-  },
+    "pact:publish": "dotenv -- sh -c 'pact-broker publish ./pacts --consumer-app-version=\"${PACT_CONSUMER_VERSION:-$npm_package_version}\" --branch=\"${GIT_BRANCH:-local}\" --broker-base-url=\"$PACT_BROKER_URL\"'"
+   },
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -22,6 +22,7 @@
   "devDependencies": {
     "@pact-foundation/pact": "^17.1.4",
     "@pact-foundation/pact-cli": "^18.10.9",
+    "dotenv-cli": "^11.1.0",
     "vitest": "^5.0.5"
   }
 }

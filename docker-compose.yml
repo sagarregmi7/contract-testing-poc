@@ -28,7 +28,7 @@ services:
     environment:
       PACT_BROKER_PORT: "9292"
       PACT_BROKER_DATABASE_URL: postgres://pact:pact_password@postgres/pact_broker
-      PACT_BROKER_BASE_URL: http://localhost:9292
+      PACT_BROKER_BASE_URL: ${PACT_BROKER_URL:-http://localhost:9292}
       PACT_BROKER_DATABASE_CONNECT_MAX_RETRIES: "5"
       PACT_BROKER_LOG_LEVEL: INFO
 
