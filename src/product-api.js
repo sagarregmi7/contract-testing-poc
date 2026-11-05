@@ -25,7 +25,7 @@ app.use(express.json());
 let products = [
   {
     id: 101,
-    name: 'Laptop',
+    deviceName: 'Laptop',
     price: 1200,
     category: 'Electronics',
     stock: 10,
